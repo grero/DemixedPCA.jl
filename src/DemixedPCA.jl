@@ -2,6 +2,7 @@ module DemixedPCA
 using MultivariateStats
 import MultivariateStats.transform
 import StatsBase.fit
+include("utils.jl")
 
 type dPCA
   F::Array{Float64,2}
