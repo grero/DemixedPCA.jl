@@ -52,10 +52,13 @@ function fit(::Type{dPCA},X::Array{Float64,3},labels::Array{Int64,1};maxoutdim=3
   return dPCA(F, D,mmc,A_OLS)
 end
 
+"""
+Transform X by projecting it onto the demixed PCA space `ppc`. Note that `size(X) = (ndims, ntrials, nbins)`
+"""
 function transform(ppc::dPCA, X::Array{Float64,3})
-	y = zeros(size(ppc.D,1), size(X,3), size(X,1))
-	for i in 1:size(y,2)
-		y[:,i,:] = ppc.D*X[:,:,i]'
+	y = zeros(size(ppc.D,1), size(X,2), size(X,3))
+	for i in 1:size(y,3)
+		y[:,:,i] = ppc.D*X[:,:,i]
 	end
 	y
 end
