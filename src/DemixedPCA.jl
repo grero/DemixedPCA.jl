@@ -12,7 +12,7 @@ type dPCA
 end
 
 """
-Fit a demixed-PCA model to the data in `X`. We have `(d,n1,n2) = size(X)`, where `d` is the dimension and `n1` and `n2` are observations along different dimensions, e.g. realizations and time, respectively.
+Fit a demixed-PCA model to the data in `X`. We have `(d,n1,n2) = size(X)`, where `d` is the dimension and `n1` and `n2` are observations along different dimensions, e.g. realizations (trials) and time, respectively.
 
 Kobak, D., Brendel, W., Constantinidis, C., & Feierstein, C. E. (2016). Demixed principal component analysis of neural population data. eLife. http://doi.org/10.7554/eLife.10989.001
 """
