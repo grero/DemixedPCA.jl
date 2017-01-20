@@ -4,6 +4,8 @@ import MultivariateStats.transform
 import StatsBase.fit
 include("utils.jl")
 
+export dPCA
+
 type dPCA
   F::Array{Float64,2}
   D::Array{Float64,2}
