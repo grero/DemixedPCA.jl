@@ -56,13 +56,13 @@ function fit(::Type{dPCA},X::Array{Float64,3},labels::Array{Int64,1};maxoutdim=3
 	μ = mean(X, (2,3))
     
     components = Dict()
-    Y = reshape(permutedims(X, [3,2,1]), ntrials*nbins, ncells)'
+    Y = permutedims(reshape(permutedims(X, [3,2,1]), ntrials*nbins, ncells),[2,1])
     #time component
-    Yt = reshape(permutedims(mean(X .-μ, 2).*ones(size(X)), [3,2,1]), ntrials*nbins, ncells)'
+    Yt = permutedims(reshape(permutedims(mean(X .-μ, 2).*ones(size(X)), [3,2,1]), ntrials*nbins, ncells),[2,1])
     components["time"] = compute_dpca(Y,Yt)
     #stimulus component
     Xs = marginalize(X, labels)
-    Ys = reshape(permutedims(Xs, [3,2,1]), ntrials*nbins, ncells)'
+    Ys = permutedims(reshape(permutedims(Xs, [3,2,1]), ntrials*nbins, ncells),[2,1])
     components["stimulus"] = compute_dpca(Y, Ys)
     return components
 end
