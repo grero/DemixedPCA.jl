@@ -60,11 +60,11 @@ function fit(::Type{dPCA},X::Array{Float64,3},labels::Array{Int64,1};maxoutdim=3
     Y = permutedims(reshape(permutedims(X, [3,2,1]), ntrials*nbins, ncells),[2,1])
     #time component
     Yt = permutedims(reshape(permutedims(mean(X .-μ, 2).*ones(size(X)), [3,2,1]), ntrials*nbins, ncells),[2,1])
-    components["time"] = compute_dpca(Y,Yt)
+    components["time"] = compute_dpca(Y,Yt,maxoutdim=maxoutdim)
     #stimulus component
     Xs = marginalize(X, labels)
     Ys = permutedims(reshape(permutedims(Xs, [3,2,1]), ntrials*nbins, ncells),[2,1])
-    components["stimulus"] = compute_dpca(Y, Ys)
+    components["stimulus"] = compute_dpca(Y, Ys,maxoutdim=maxoutdim)
     return components
 end
 
