@@ -1,5 +1,6 @@
 module DemixedPCA
 using MultivariateStats
+using Statistics
 import MultivariateStats.transform
 import StatsBase.fit
 include("utils.jl")
