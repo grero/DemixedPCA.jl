@@ -56,7 +56,7 @@ function fit(::Type{dPCA},X::Array{Float64,3},labels::Array{Int64,1};maxoutdim=3
 	μ = mean(X, dims=(2,3))
     
     components = Dict()
-    Y = permutedims(reshape(permutedims(X, [3,2,1]), ntrials*nbins, ncells),[2,1]) .- μ
+    Y = permutedims(reshape(permutedims(X .- μ, [3,2,1]), ntrials*nbins, ncells),[2,1])
     #time component
     Yt = permutedims(reshape(permutedims(mean(X .-μ, dims=2).*ones(size(X)), [3,2,1]), ntrials*nbins, ncells),[2,1])
     components["time"] = compute_dpca(Y,Yt,maxoutdim=maxoutdim)
