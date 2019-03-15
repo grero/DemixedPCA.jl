@@ -1,6 +1,5 @@
 module DemixedPCA
 using MultivariateStats
-using Statistics
 import MultivariateStats.transform
 import StatsBase.fit
 include("utils.jl")
@@ -40,7 +39,7 @@ function marginalize(X::Array{Float64,3}, trial_labels::AbstractArray{Int64,1})
     Xp = zeros(X)
     for ll in labels
         tidx = trial_labels.==ll
-        μt = mean(X[:,tidx,:], (2,3)).*ones(ncells,sum(tidx),nbins)
+        μt = mean(X[:,tidx,:], dims=(2,3)).*ones(ncells,sum(tidx),nbins)
         Xp[:,tidx,:] = μt 
     end
     Xp
@@ -54,12 +53,12 @@ Kobak, D., Brendel, W., Constantinidis, C., & Feierstein, C. E. (2016). Demixed 
 function fit(::Type{dPCA},X::Array{Float64,3},labels::Array{Int64,1};maxoutdim=3,λ=0.0)
 	ncells,ntrials,nbins = size(X)
 	#get the average firing rate for each cell
-	μ = mean(X, (2,3))
+	μ = mean(X, dims=(2,3))
     
     components = Dict()
     Y = permutedims(reshape(permutedims(X, [3,2,1]), ntrials*nbins, ncells),[2,1])
     #time component
-    Yt = permutedims(reshape(permutedims(mean(X .-μ, 2).*ones(size(X)), [3,2,1]), ntrials*nbins, ncells),[2,1])
+    Yt = permutedims(reshape(permutedims(mean(X .-μ, dims=2).*ones(size(X)), [3,2,1]), ntrials*nbins, ncells),[2,1])
     components["time"] = compute_dpca(Y,Yt,maxoutdim=maxoutdim)
     #stimulus component
     Xs = marginalize(X, labels)
