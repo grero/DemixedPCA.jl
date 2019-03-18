@@ -1,4 +1,5 @@
 module DemixedPCA
+using Statistics
 using MultivariateStats
 import MultivariateStats.transform
 import StatsBase.fit
