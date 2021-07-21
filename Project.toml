@@ -1,7 +1,7 @@
 name = "DemixedPCA"
 uuid = "275e4ca1-a518-4eac-bc9f-23cc20e68f62"
 author = ["Roger Herikstad <roger.hersikstad@gmail.com>"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
