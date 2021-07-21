@@ -1,6 +1,20 @@
 using DemixedPCA
 using Distributions
-using Base.Test
+using LinearAlgebra
+using Random
+using Test
+
+@testset "Marginalize" begin
+    X = fill(0.0,1,4,2)
+    label = [1,2,1,2]
+    X[1,[1,3],1] .= [0.45, 0.55]
+    X[1,[1,3],2] .= [0.55, 0.65]
+    X[1,[2,4],1] .= [-0.45, -0.55]
+    X[1,[2,4],2] .= [-0.55, -0.65]
+    Xl = DemixedPCA.marginalize(X, label)
+    @test Xl[1,[1,3],1] ≈ [0.55, 0.55]
+    @test Xl[1,[2,4],2] ≈ [-0.55, -0.55]
+end
 
 function test1()
     RNG = MersenneTwister(UInt32(1234))
@@ -14,34 +28,46 @@ end
 #@show sum(y)
 #@test sum(y) ≈ -18624.818676126706
 
-function test2()
+function test2(RNG=MersenneTwister(rand(UInt32)))
     ncells = 12
     ntrials = 100
     nbins = 100
-    t = linspace(0,1,nbins)
+    t = range(0,stop=1,length=nbins)
+    #a single time component
     yt = sin.(2*pi*t)
-    Xt = reshape(yt,1,1,nbins).*ones(ncells,ntrials,nbins)
+    Xt = reshape(yt,1,1,nbins).*ones(1,ntrials,nbins)
+    Xs = fill(0.0, 3, ntrials, nbins)
     ys = [1.0, 5.0, 10.0]
-    label = Array{Int64,1}(ntrials)
-    μ = 50*rand(ncells)
+    label = Vector{Int64}(undef, ntrials)
+    μ = 50*rand(RNG, ncells)
     for t in 1:ntrials
-        label[t] = rand(1:3)
-        for i in 1:ncells
-            Xs[i,t,:] = ys[label[t]] + μ[i]
+        label[t] = rand(RNG, 1:3)
+        for i in 1:3
+            Xs[i,t,:] .= ys[label[t]]
         end
     end
-    Fs = randn(ncells,3)
-    Ds = randn(3, ncells)
+    Fs = randn(RNG, ncells,3)
+    Ds = randn(RNG, 3, ncells)
     As = Fs*Ds
-    Ft = randn(ncells,1)
-    Dt = randn(1,ncells)
+    Ft = randn(RNG, ncells,1)
+    @show Ft
+    Dt = randn(RNG, 1,ncells)
     At = Ft*Dt
-    X = zeros(ncells, ntrials, nbins)
+    X = fill(0.0, ncells, ntrials, nbins)
     for i in 1:nbins
-        X[:,:,i] = inv(As)*Xs[:,:,i] + inv(At)*Xt[:,:,i] + 0.1*randn(ncells,ntrials)
+        X[:,:,i] .= Fs*Xs[:,:,i] + Ft*Xt[:,:,i] + 0.1*randn(ncells,ntrials)
     end
 
-    components = DemixedPCA.fit(Demixed.PCA, X, labels)
-    components, Fs, Ds, Ft, Dt 
+    components = DemixedPCA.fit(DemixedPCA.dPCA, X, label)
+    Zt = DemixedPCA.transform(components["time"], X)
+    @show size(Zt), size(Xt)
+    @show norm(Zt .- Xt)
+    components, Fs, Ds, Ft, Dt
 end
+
+components, Fs, Ds, Ft, Dt = test2()
+@show Ft
+@show components["time"].F
+@show components["time"].D
+
 
