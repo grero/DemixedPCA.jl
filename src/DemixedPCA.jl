@@ -37,13 +37,14 @@ function marginalize(X::Array{Float64,3}, trial_labels::AbstractArray{Int64,1})
     ncells, ntrials, nbins = size(X)
     labels = unique(trial_labels)
     sort!(labels)
-    Xp = fill!(similar(X), 0.0)
+
+    # average over time first
+    Xp = mean(X, dims=3)
     for ll in labels
         tidx = trial_labels.==ll
-        μt = mean(X[:,tidx,:], dims=(2,3)).*ones(ncells,sum(tidx),nbins)
-        Xp[:,tidx,:] = μt 
+        Xp[:,tidx,:] .= mean(Xp[:,tidx,:],dims=2)
     end
-    Xp
+    Xp.*fill(1.0, size(X)...)
 end
 
 """
