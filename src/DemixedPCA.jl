@@ -56,7 +56,7 @@ function fit(::Type{dPCA},X::Array{Float64,3},labels::Array{Int64,1};λ=0.0, kvs
 	ncells,ntrials,nbins = size(X)
 	#get the average firing rate for each cell
 	μ = mean(X, dims=(2,3))
-    
+
     components = Dict()
     Y = permutedims(reshape(permutedims(X .- μ, [3,2,1]), ntrials*nbins, ncells),[2,1])
     #time component
