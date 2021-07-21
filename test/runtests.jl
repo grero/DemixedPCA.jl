@@ -4,6 +4,18 @@ using LinearAlgebra
 using Random
 using Test
 
+@testset "Marginalize" begin
+    X = fill(0.0,1,4,2)
+    label = [1,2,1,2]
+    X[1,[1,3],1] .= [0.45, 0.55]
+    X[1,[1,3],2] .= [0.55, 0.65]
+    X[1,[2,4],1] .= [-0.45, -0.55]
+    X[1,[2,4],2] .= [-0.55, -0.65]
+    Xl = DemixedPCA.marginalize(X, label)
+    @test Xl[1,[1,3],1] ≈ [0.55, 0.55]
+    @test Xl[1,[2,4],2] ≈ [-0.55, -0.55]
+end
+
 function test1()
     RNG = MersenneTwister(UInt32(1234))
 	X,labels = DemixedPCA.generate_data(RNG)
